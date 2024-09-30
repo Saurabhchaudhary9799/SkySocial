@@ -145,7 +145,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
   const handleFollowUnfollow = async (id: string) => {
     try {
       const response = await axios.post(
-        `http://13.232.21.29:8000/api/v1/users/${id}/follower`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/${id}/follower`,
         {},
         {
           headers: {
@@ -193,7 +193,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
       const authToken = user?.authToken;
 
       const response = await axios.post(
-        `http://13.232.21.29:8000/api/v1/posts/${post._id}/save`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${post._id}/save`,
         {},
         {
           headers: {

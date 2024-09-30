@@ -62,7 +62,7 @@ export function EditProfile() {
     try {
       setLoading(true);
       const response = await axios.patch(
-        "http://13.232.21.29:8000/api/v1/users",
+        `${import.meta.env.VITE_BASEURL}/api/v1/users`,
         formData,
         {
           headers: {

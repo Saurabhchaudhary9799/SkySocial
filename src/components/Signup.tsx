@@ -78,7 +78,7 @@ const Signup = () => {
         formData.append("cover_image", data.cover_image);
       }
       const response = await axios.post(
-        "http://13.232.21.29:8000/api/v1/users/signup",
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/signup`,
         formData,
         {
           headers: {

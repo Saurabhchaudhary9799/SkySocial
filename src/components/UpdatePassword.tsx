@@ -69,7 +69,7 @@ export function UpdatePassword() {
       setLoading(true);
       console.log("hii")
       const response = await axios.patch(
-        "http://13.232.21.29:8000/api/v1/users/updatePassword",
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/updatePassword`,
         data,
         {
           headers: {

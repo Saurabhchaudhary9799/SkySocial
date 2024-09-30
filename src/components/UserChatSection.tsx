@@ -101,7 +101,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       const userData = localStorage.getItem("userData");
       const authToken = userData ? JSON.parse(userData).authToken : null;
       const response = await axios.get(
-        `http://13.232.21.29:8000/api/v1/users/${receiver.id}/message`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/${receiver.id}/message`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -133,7 +133,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       });
 
       await axios.post(
-        `http://13.232.21.29:8000/api/v1/users/${receiver.id}/message`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/${receiver.id}/message`,
         {
           senderId: userId,
           receiverId: receiver.id,

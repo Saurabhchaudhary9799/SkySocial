@@ -71,7 +71,7 @@ const Profile = () => {
         const userData = localStorage.getItem("userData");
         const authToken = userData ? JSON.parse(userData).authToken : null;
         const response = await axios.get(
-          `http://13.232.21.29:8000/api/v1/users/${userId}`,
+          `${import.meta.env.VITE_BASEURL}/api/v1/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -109,7 +109,7 @@ const Profile = () => {
      const userData = localStorage.getItem("userData");
      const authToken = userData ? JSON.parse(userData).authToken : null;
      const response = await axios.delete(
-       `http://13.232.21.29:8000/api/v1/posts/${postId}/save`,
+       `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/save`,
        {
          headers: {
            Authorization: `Bearer ${authToken}`,

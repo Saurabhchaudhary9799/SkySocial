@@ -93,7 +93,7 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
         status: string;
         total: number;
         result: { posts: Post[] };
-      }>("http://13.232.21.29:8000/api/v1/posts", {
+      }>(`${import.meta.env.VITE_BASEURL}/api/v1/posts`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -126,7 +126,7 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
       ).authToken;
 // console.log(formData)
       const response = await axios.post<{ status: string; post: Post }>(
-        "http://13.232.21.29:8000/api/v1/posts",
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts`,
         formData,
         {
           headers: {
@@ -155,7 +155,7 @@ console.log(response.data)
         localStorage.getItem("userData") || "{}"
       ).authToken;
 
-      await axios.delete(`http://13.232.21.29:8000/api/v1/posts/${postId}`, {
+      await axios.delete(`${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -175,7 +175,7 @@ console.log(response.data)
       ).authToken;
 
       const response = await axios.post<{ comment: Comment }>(
-        `http://13.232.21.29:8000/api/v1/posts/${postId}/comments`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/comments`,
         { message },
         {
           headers: {
@@ -246,7 +246,7 @@ console.log(response.data)
   
       // Send DELETE request to delete the comment
       await axios.delete(
-        `http://13.232.21.29:8000/api/v1/posts/${postId}/comments/${commentId}`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/comments/${commentId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -282,7 +282,7 @@ console.log(response.data)
       ).authToken;
 
       const response = await axios.post(
-        `http://13.232.21.29:8000/api/v1/posts/${postId}/like`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/like`,
         {},
         {
           headers: {

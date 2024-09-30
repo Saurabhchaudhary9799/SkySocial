@@ -66,7 +66,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { authToken ,result} = JSON.parse(storedData);
 
         try {
-          const response = await axios.get('http://13.232.21.29:8000/api/v1/users', {
+          const response = await axios.get(`${import.meta.env.VITE_BASEURL}/api/v1/users`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
 

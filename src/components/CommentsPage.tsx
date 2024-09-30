@@ -60,7 +60,7 @@ const CommentsPage: React.FC<CommentProps> = ({ postId, comments }) => {
       const authToken = userData ? JSON.parse(userData).authToken : null;
       // console.log('authToken',authToken);
       const response = await axios.get(
-        `http://13.232.21.29:8000/api/v1/posts/${postId}/comments`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/comments`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

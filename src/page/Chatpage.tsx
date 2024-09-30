@@ -97,7 +97,7 @@ const Chatpage = () => {
         const authToken = userData ? JSON.parse(userData).authToken : null;
 
         const response = await axios.get(
-          "http://13.232.21.29:8000/api/v1/users/listPeople",
+          `${import.meta.env.VITE_BASEURL}/api/v1/users/listPeople`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -129,7 +129,7 @@ const Chatpage = () => {
       const userData = localStorage.getItem("userData");
       const authToken = userData ? JSON.parse(userData).authToken : null;
       const response = await axios.post(
-        `http://13.232.21.29:8000/api/v1/users/search-user`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/users/search-user`,
         { username },
         {
           headers: {

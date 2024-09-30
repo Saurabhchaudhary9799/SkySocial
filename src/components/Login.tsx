@@ -52,7 +52,7 @@ const navigate = useNavigate()
   const onSubmit = async (data:  z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response= await axios.post("http://13.232.21.29:8000/api/v1/users/login",data,{
+      const response= await axios.post(`${import.meta.env.VITE_BASEURL}/api/v1/users/login`,data,{
         headers: {
           'Content-Type': 'application/json',
         },

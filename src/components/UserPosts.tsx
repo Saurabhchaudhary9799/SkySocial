@@ -39,7 +39,7 @@ const UserPosts: React.FC<UserPostProps> = ({ posts,updateUserProfile }) => {
           const userData = localStorage.getItem("userData");
           const authToken = userData ? JSON.parse(userData).authToken : null;
           const response = await axios.delete(
-            `http://13.232.21.29:8000/api/v1/posts/${postId}`,
+            `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}`,
             {
               headers: {
                 Authorization: `Bearer ${authToken}`,
