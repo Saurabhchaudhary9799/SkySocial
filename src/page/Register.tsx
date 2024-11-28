@@ -6,7 +6,8 @@ import Signup from "@/components/Signup";
 
 const Register = () => {
 
-
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL ;
+  console.log(BASE_URL);
   return (
     <div className="h-screen flex justify-center items-center ">
       <Tabs defaultValue="login" className="w-[250px] sm:w-[400px] h-[400px] ">

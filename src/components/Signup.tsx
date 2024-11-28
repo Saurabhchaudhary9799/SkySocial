@@ -42,7 +42,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
-console.log(BASE_URL)
+console.log('BASE_URL',BASE_URL);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
