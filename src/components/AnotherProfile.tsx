@@ -50,6 +50,9 @@ const AnotherProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL ;
+  // console.log(BASE_URL);
   useEffect(() => {
     const fetchUser = async () => {
       if (!userId) {
@@ -60,7 +63,7 @@ const AnotherProfile = () => {
         const userData = localStorage.getItem("userData");
         const authToken = userData ? JSON.parse(userData).authToken : null;
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/api/v1/users/${userId}`,
+          `${BASE_URL}/api/v1/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -86,7 +89,7 @@ const AnotherProfile = () => {
     }
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/${userId}/follower`,
+        `${BASE_URL}/api/v1/users/${userId}/follower`,
         {},
         {
           headers: {

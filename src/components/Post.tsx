@@ -72,6 +72,9 @@ const Post: React.FC<PostProps> = ({ post }) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji); // Append the selected emoji to the message
   };
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
+
   useEffect(() => {
     // Check if the post's user is already in the current user's followings array
     if (
@@ -145,7 +148,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
   const handleFollowUnfollow = async (id: string) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/${id}/follower`,
+        `${BASE_URL}/api/v1/users/${id}/follower`,
         {},
         {
           headers: {
@@ -193,7 +196,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
       const authToken = user?.authToken;
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${post._id}/save`,
+        `${BASE_URL}/api/v1/posts/${post._id}/save`,
         {},
         {
           headers: {

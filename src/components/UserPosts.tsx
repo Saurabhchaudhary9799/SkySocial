@@ -33,13 +33,16 @@ interface UserPostProps {
 
 const UserPosts: React.FC<UserPostProps> = ({ posts,updateUserProfile }) => {
   const [loading, setLoading] = useState(false);
+
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
   const handleDelete = async (postId:string) => {
          try {
           setLoading(true);
           const userData = localStorage.getItem("userData");
           const authToken = userData ? JSON.parse(userData).authToken : null;
           const response = await axios.delete(
-            `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}`,
+            `${BASE_URL}/api/v1/posts/${postId}`,
             {
               headers: {
                 Authorization: `Bearer ${authToken}`,

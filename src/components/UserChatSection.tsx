@@ -69,6 +69,9 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
     setMessage((prevMessage) => prevMessage + emojiObject.emoji); // Append the selected emoji to the message
   };
 
+
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
   useEffect(() => {
     socket.emit("user-joined", userId);
     // console.log("hello");
@@ -101,7 +104,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       const userData = localStorage.getItem("userData");
       const authToken = userData ? JSON.parse(userData).authToken : null;
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/${receiver.id}/message`,
+        `${BASE_URL}/api/v1/users/${receiver.id}/message`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -133,7 +136,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       });
 
       await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/${receiver.id}/message`,
+        `${BASE_URL}/api/v1/users/${receiver.id}/message`,
         {
           senderId: userId,
           receiverId: receiver.id,

@@ -64,6 +64,9 @@ const Profile = () => {
   const [isActive, setIsActive] = useState<string>("posts");
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -71,7 +74,7 @@ const Profile = () => {
         const userData = localStorage.getItem("userData");
         const authToken = userData ? JSON.parse(userData).authToken : null;
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/api/v1/users/${userId}`,
+          `${BASE_URL}/api/v1/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -109,7 +112,7 @@ const Profile = () => {
      const userData = localStorage.getItem("userData");
      const authToken = userData ? JSON.parse(userData).authToken : null;
      const response = await axios.delete(
-       `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/save`,
+       `${BASE_URL}/api/v1/posts/${postId}/save`,
        {
          headers: {
            Authorization: `Bearer ${authToken}`,

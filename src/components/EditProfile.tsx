@@ -38,6 +38,8 @@ export function EditProfile() {
     },
   });
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL ;
+
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     fieldName: "profile_image" | "cover_image"
@@ -62,7 +64,7 @@ export function EditProfile() {
     try {
       setLoading(true);
       const response = await axios.patch(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users`,
+        `${BASE_URL}/api/v1/users`,
         formData,
         {
           headers: {

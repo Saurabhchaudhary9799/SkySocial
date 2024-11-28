@@ -41,6 +41,9 @@ const Signup = () => {
   const [loading ,setLoading] = useState(false)
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,7 +81,7 @@ const Signup = () => {
         formData.append("cover_image", data.cover_image);
       }
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/signup`,
+        `${BASE_URL}/api/v1/users/signup`,
         formData,
         {
           headers: {

@@ -15,6 +15,9 @@ const SuggestedPeople = () => {
   const {user} = useUser()
   const [suggestedPeople, setSuggestedPeople] = useState<User[]>([]);
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
+
   useEffect(() => {
     const fetchSuggestedPeople = async () => {
       try {
@@ -22,7 +25,7 @@ const SuggestedPeople = () => {
         const authToken = userData ? JSON.parse(userData).authToken : null;
 
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/api/v1/users/suggested-people`,
+          `${BASE_URL}/api/v1/users/suggested-people`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,

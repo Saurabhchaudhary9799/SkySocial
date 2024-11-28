@@ -39,6 +39,8 @@ interface UserContextType {
   updateUser: (updatedUser: User) => void;
   
 }
+const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
 
 // Create the UserContext
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -66,7 +68,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { authToken ,result} = JSON.parse(storedData);
 
         try {
-          const response = await axios.get(`${import.meta.env.VITE_BASEURL}/api/v1/users`, {
+          const response = await axios.get(`${BASE_URL}/api/v1/users`, {
             headers: { Authorization: `Bearer ${authToken}` },
           });
 

@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "proxy": "http://13.232.21.29:8000",
+  "proxy": "https://social-media-backend-gold-phi.vercel.app",
   "type": "module",
   "scripts": {
     "dev": "vite",

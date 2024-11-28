@@ -44,6 +44,9 @@ const Chatpage = () => {
   } | null>(null);
   const [showChatSection, setShowChatSection] = useState(false);
 
+
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
   const updateFriends = async (
     receiverId: string,
     lastMessage: string,
@@ -97,7 +100,7 @@ const Chatpage = () => {
         const authToken = userData ? JSON.parse(userData).authToken : null;
 
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/api/v1/users/listPeople`,
+          `${BASE_URL}/api/v1/users/listPeople`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -129,7 +132,7 @@ const Chatpage = () => {
       const userData = localStorage.getItem("userData");
       const authToken = userData ? JSON.parse(userData).authToken : null;
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/search-user`,
+        `${BASE_URL}/api/v1/users/search-user`,
         { username },
         {
           headers: {

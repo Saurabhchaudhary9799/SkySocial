@@ -38,6 +38,8 @@ export function UpdatePassword() {
     },
   });
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
   
   const onSubmit = async (data: FormValues) => {
     // const formData = new FormData();
@@ -69,7 +71,7 @@ export function UpdatePassword() {
       setLoading(true);
       console.log("hii")
       const response = await axios.patch(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/updatePassword`,
+        `${BASE_URL}/api/v1/users/updatePassword`,
         data,
         {
           headers: {

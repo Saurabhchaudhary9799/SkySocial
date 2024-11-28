@@ -73,6 +73,9 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -93,7 +96,7 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
         status: string;
         total: number;
         result: { posts: Post[] };
-      }>(`${import.meta.env.VITE_BASEURL}/api/v1/posts`, {
+      }>(`${BASE_URL}/api/v1/posts`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -126,7 +129,7 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
       ).authToken;
 // console.log(formData)
       const response = await axios.post<{ status: string; post: Post }>(
-        `${import.meta.env.VITE_BASEURL}/api/v1/posts`,
+        `${BASE_URL}/api/v1/posts`,
         formData,
         {
           headers: {
@@ -155,7 +158,7 @@ console.log(response.data)
         localStorage.getItem("userData") || "{}"
       ).authToken;
 
-      await axios.delete(`${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}`, {
+      await axios.delete(`${BASE_URL}/api/v1/posts/${postId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -175,7 +178,7 @@ console.log(response.data)
       ).authToken;
 
       const response = await axios.post<{ comment: Comment }>(
-        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/comments`,
+        `${BASE_URL}/api/v1/posts/${postId}/comments`,
         { message },
         {
           headers: {
@@ -246,7 +249,7 @@ console.log(response.data)
   
       // Send DELETE request to delete the comment
       await axios.delete(
-        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/comments/${commentId}`,
+        `${BASE_URL}/api/v1/posts/${postId}/comments/${commentId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -282,7 +285,7 @@ console.log(response.data)
       ).authToken;
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/posts/${postId}/like`,
+        `${BASE_URL}/api/v1/posts/${postId}/like`,
         {},
         {
           headers: {

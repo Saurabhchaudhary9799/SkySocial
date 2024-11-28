@@ -72,6 +72,8 @@ const CreatePost: React.FC = () => {
   const [loading, setLoading] = useState(false);
  const [username,setUsername] = useState("")
 
+ const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL ;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -119,7 +121,7 @@ const CreatePost: React.FC = () => {
       const userData = localStorage.getItem("userData");
       const authToken = userData ? JSON.parse(userData).authToken : null;
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/api/v1/users/search-user`,
+        `${BASE_URL}/api/v1/users/search-user`,
         { username },
         {
           headers: {
