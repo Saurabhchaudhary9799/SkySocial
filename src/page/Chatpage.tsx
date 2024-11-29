@@ -11,6 +11,7 @@ import UserChatSection from "@/components/UserChatSection";
 import { socket } from "@/Config/socketConfig";
 import { toast } from "sonner";
 import { useUser } from "@/context/userContext";
+import CryptoJS from 'crypto-js';
 
 interface People {
   user: {
@@ -31,6 +32,8 @@ interface People {
 //   withCredentials: true,
 // });
 
+const secretKey:string = "your-secret-base-key";
+
 const Chatpage = () => {
   const { user } = useUser();
   const [friends, setFriends] = useState<People[]>([]);
@@ -43,7 +46,24 @@ const Chatpage = () => {
     profile_image: string;
   } | null>(null);
   const [showChatSection, setShowChatSection] = useState(false);
+  
+ 
+    const decrypt = (encryptedText: string): string => {
+      try {
+        // console.log("Decrypting with key:", secretKey);
 
+        const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey);
+        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+        // console.log("Decrypted text:", decryptedText);
+        return decryptedText;
+      } catch (error) {
+        console.error("Decryption failed:", error);
+        return encryptedText; // Return original if decryption fails
+      }
+    };
+
+   
 
   const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
 
@@ -52,6 +72,9 @@ const Chatpage = () => {
     lastMessage: string,
     timestamp: string
   ) => {
+    // console.log('lastMessage',lastMessage)
+    const decryptedMessage = decrypt(lastMessage);
+    // console.log('decryptedMessage',decryptedMessage)
     setFriends((prevFriends) => {
       const existingFriendIndex = prevFriends.findIndex(
         (friend) => friend.user.id === receiverId
@@ -63,7 +86,7 @@ const Chatpage = () => {
         updatedFriends[existingFriendIndex] = {
           ...updatedFriends[existingFriendIndex],
           lastMessage: {
-            message: lastMessage,
+            message: decryptedMessage,
             createdAt: timestamp,
             sender: {
               id: user?.userid ?? "",
@@ -80,7 +103,7 @@ const Chatpage = () => {
             profile_image: receiver?.profile_image ?? "",
           },
           lastMessage: {
-            message: lastMessage,
+            message: decryptedMessage,
             createdAt: timestamp,
             sender: {
               id: user?.userid ?? "",

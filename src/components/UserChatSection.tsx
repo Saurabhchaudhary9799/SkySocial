@@ -8,6 +8,8 @@ import axios from "axios";
 import { Socket } from "socket.io-client";
 import { FaRegSmile } from "react-icons/fa";
 import { format } from "date-fns";
+import CryptoJS from 'crypto-js';
+
 interface ChatSectionProps {
   receiver: {
     id: string;
@@ -20,6 +22,45 @@ interface ChatSectionProps {
     lastMessage: string,
     timestamp: string
   ) => void; // Add this prop
+}
+
+class EncryptionService {
+  private secretKey: string;
+
+  constructor(secretKey: string) {
+    // Use a more secure key generation method in production
+    // this.secretKey = CryptoJS.lib.WordArray.random(256/8).toString();
+    this.secretKey= secretKey;
+  }
+
+  // Encrypt message with support for emojis
+  encrypt(text: string): string {
+    // console.log('encrypt',this.secretKey);
+    return CryptoJS.AES.encrypt(text, this.secretKey).toString();
+  }
+
+  // Decrypt message, handling potential emoji encryption
+  decrypt(encryptedText: string): string {
+    try {
+      // console.log('decrypt',this.secretKey);
+      const bytes = CryptoJS.AES.decrypt(encryptedText, this.secretKey);
+      // console.log(bytes)
+
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch {
+      return encryptedText; // Return original if decryption fails
+    }
+  }
+
+  // Generate a shareable encryption key
+  generateShareableKey(): string {
+    return this.secretKey;
+  }
+
+  // Validate and set a shared key
+  setSharedKey(sharedKey: string): void {
+    this.secretKey = sharedKey;
+  }
 }
 
 // const socket = io("http://localhost:8000", {
@@ -64,6 +105,8 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
   // console.log(receiverId);
   //   console.log(userId);
 
+  const encryptionService = new EncryptionService('your-secret-base-key');
+
   const addEmoji = (emojiObject: any) => {
     // console.log(emojiObject.emoji);
     setMessage((prevMessage) => prevMessage + emojiObject.emoji); // Append the selected emoji to the message
@@ -78,8 +121,13 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
     socket.on("receive-message", async (data) => {
       if (data.senderId === receiver?.id || data.receiverId === userId) {
         // Fetch updated messages from the server
+        // await fetchMessages();
+        // updateFriends(data.senderId, data.message, data.timestamp);
+        // console.log('data',data.message);
+        const decryptedMessage = encryptionService.decrypt(data.message);
+        // console.log('decryptedMessages',decryptedMessage);
         await fetchMessages();
-        updateFriends(data.senderId, data.message, data.timestamp);
+        updateFriends(data.senderId, decryptedMessage, data.timestamp);
       }
     });
     return () => {
@@ -111,8 +159,15 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
           },
         }
       );
+
+      const decryptedMessages = response.data.result.allMessages.map((msg: any) => ({
+        ...msg,
+        message: encryptionService.decrypt(msg.message)
+      }));
+// console.log(decryptedMessages);
+      setMessages(decryptedMessages);
       // console.log(response);
-      setMessages(response.data.result.allMessages);
+      // setMessages(response.data.result.allMessages);
       // console.log(messages); // Assuming the messages are in `response.data.messages`
     } catch (error) {
       console.error("Failed to fetch messages:", error);
@@ -128,10 +183,11 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
 
       const timestamp = new Date().toISOString();
       //   console.log('senderId :' , userId , "receiverId :" , receiver.id , "message :" , message)
+      const encryptedMessage = encryptionService.encrypt(message);
       socket.emit("send-message", {
         senderId: userId,
         receiverId: receiver.id,
-        message,
+        message:encryptedMessage,
         timestamp,
       });
 
@@ -140,7 +196,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
         {
           senderId: userId,
           receiverId: receiver.id,
-          message,
+          message:encryptedMessage,
         },
         {
           headers: {
@@ -153,7 +209,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       // Fetch updated messages
       await fetchMessages();
 
-      updateFriends(receiver.id, message, timestamp);
+      updateFriends(receiver.id, encryptedMessage, timestamp);
       // Clear input after sending
       setMessage("");
     } catch (error) {}
