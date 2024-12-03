@@ -8,7 +8,9 @@ import axios from "axios";
 import { Socket } from "socket.io-client";
 import { FaRegSmile } from "react-icons/fa";
 import { format } from "date-fns";
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Dice1 } from "lucide-react";
 
 interface ChatSectionProps {
   receiver: {
@@ -30,7 +32,7 @@ class EncryptionService {
   constructor(secretKey: string) {
     // Use a more secure key generation method in production
     // this.secretKey = CryptoJS.lib.WordArray.random(256/8).toString();
-    this.secretKey= secretKey;
+    this.secretKey = secretKey;
   }
 
   // Encrypt message with support for emojis
@@ -99,21 +101,28 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<any[]>([]);
   const [showPicker, setShowPicker] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [prompt, setPrompt] = useState<string>("");
   const userId = user?.userid;
   const receiverId = receiver?.id;
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   // console.log(receiverId);
   //   console.log(userId);
 
-  const encryptionService = new EncryptionService('your-secret-base-key');
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+
+  const encryptionService = new EncryptionService("your-secret-base-key");
 
   const addEmoji = (emojiObject: any) => {
     // console.log(emojiObject.emoji);
     setMessage((prevMessage) => prevMessage + emojiObject.emoji); // Append the selected emoji to the message
   };
 
-
-  const BASE_URL = import.meta.env.VITE_ENV === "development" ? import.meta.env.VITE_BASEURL :import.meta.env.VITE_PRODURL 
+  const BASE_URL =
+    import.meta.env.VITE_ENV === "development"
+      ? import.meta.env.VITE_BASEURL
+      : import.meta.env.VITE_PRODURL;
 
   useEffect(() => {
     socket.emit("user-joined", userId);
@@ -160,11 +169,13 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
         }
       );
 
-      const decryptedMessages = response.data.result.allMessages.map((msg: any) => ({
-        ...msg,
-        message: encryptionService.decrypt(msg.message)
-      }));
-// console.log(decryptedMessages);
+      const decryptedMessages = response.data.result.allMessages.map(
+        (msg: any) => ({
+          ...msg,
+          message: encryptionService.decrypt(msg.message),
+        })
+      );
+      // console.log(decryptedMessages);
       setMessages(decryptedMessages);
       // console.log(response);
       // setMessages(response.data.result.allMessages);
@@ -187,7 +198,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       socket.emit("send-message", {
         senderId: userId,
         receiverId: receiver.id,
-        message:encryptedMessage,
+        message: encryptedMessage,
         timestamp,
       });
 
@@ -196,7 +207,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
         {
           senderId: userId,
           receiverId: receiver.id,
-          message:encryptedMessage,
+          message: encryptedMessage,
         },
         {
           headers: {
@@ -227,6 +238,34 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
   }, [messages]);
 
   const groupedMessages = groupMessagesByDate(messages);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+
+  const handleSuggest = async () => {
+    if (!prompt.trim()) return;
+
+    const answerType =
+      "Create a list of three open-ended and engaging suggestions formatted as a single string for a given prompt. Each suggestion should be separated by '||'. These suggestions are for a chat functionality in social media application , like would you like to watch movie with me ? and i like football, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing  on universal themes that encourage friendly interaction. ";
+    // For example, your output should be structured like this: 'What&apos;s a hobby you&apos;ve recently started?|| If you could have dinner with any historical figure, who would it be?||&apos;s a simple thing
+    const newPrompt = prompt + answerType;
+
+    // setPrompt(newPrompt)
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const result = await model.generateContentStream(newPrompt);
+      // console.log('result',result)
+      let resultText = "";
+      for await (const chunk of result.stream) {
+        resultText += chunk.text();
+      }
+      // console.log('result text',resultText)
+      const ideas = resultText.split("||").slice(0, 3); // Process the response
+      setSuggestions(ideas);
+    } catch (error) {
+      console.error("Failed to fetch AI suggestions:", error);
+    }
+  };
+
   return (
     <section className="user-chats flex flex-col  h-[500px]">
       {receiver ? (
@@ -295,11 +334,62 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
             <EmojiPicker onEmojiClick={addEmoji} />
           </div>
         )}
+        <button className="w-[100px] border rounded" onClick={toggleModal}>
+          Ask 
+        </button>
 
         <Button type="submit" onClick={sendMessage}>
           Send
         </Button>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
+          <div className="bg-white px-6 py-2 rounded-lg w-[90%] sm:w-[400px] text-black">
+            <div className=" flex justify-end">
+              <span
+                className="text-right border px-2 rounded bg-black text-white cursor-pointer"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setPrompt("");
+                  setSuggestions([]);
+                }}
+              >
+                x
+              </span>
+            </div>
+            <h2 className="text-lg font-bold mb-4 text-black text-center">
+              What can I suggest you?
+            </h2>
+
+            <div className="flex justify-end gap-2">
+              <Input
+                type="text"
+                placeholder="Ask for ideas..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="mb-4 text-black"
+              />
+              {/* <Button
+                variant="outline"
+                onClick={toggleModal}
+                className="text-gray-500"
+              >
+                Cancel
+              </Button> */}
+              <Button onClick={handleSuggest}>Suggest</Button>
+            </div>
+            <div>
+              {suggestions.length > 0 &&
+                suggestions.map((suggestion, i) => (
+                  <div key={i}>
+                    {i + 1}. {suggestion}
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
