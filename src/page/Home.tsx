@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PostProvider } from '@/context/PostContext';
 import SuggestedPeople from '@/components/SuggestedPeople';
+import CustomChallenge from '@/components/CustomChallenge';
 
 
 // interface User {
@@ -49,8 +50,9 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-4">
           
           {/* Left Sidebar */}
-          <div className="hidden md:block md:col-span-3 lg:col-span-3  ">
+          <div className="hidden md:block md:col-span-3 lg:col-span-3  space-y-5">
             <ProfileBox />
+            <CustomChallenge/>
           </div>
 
           {/* Main Feed */}
