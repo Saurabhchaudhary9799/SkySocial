@@ -3,11 +3,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import useFetchActivePeople from "@/hooks/useFetchActivePeople";
+import { socket } from "@/Config/socketConfig";
+import { useUser } from "@/context/userContext";
 
 const LivePeople = () => {
   const { activePeople, loading, error } = useFetchActivePeople();
+const {user} = useUser();
 
-  console.log(activePeople);
+  // console.log(activePeople);
+  const handleInvite = (friend:any) => {
+    // console.log(friend);
+    socket.emit("accept-invite", {...friend ,currentUser:user?.username,currentUserId:user?.userid });
+  };
+  
 
   return (
     <div className="active-friends-section px-3 py-2">
@@ -27,7 +35,7 @@ const LivePeople = () => {
                 </Avatar>
                 <span>{people.username}</span>
               </div>
-              <Button>Invite</Button>
+              <Button onClick={() => handleInvite(people)}>Invite</Button>
             </div>
           ))}
       </div>

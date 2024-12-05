@@ -12,6 +12,7 @@ import Chatpage from "./page/Chatpage";
 import ChallengePage from "./components/ChallengePage";
 import { UserProvider } from "./context/userContext";
 import { PostProvider } from "./context/PostContext";
+import GamePage from "./components/GamePage";
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
               path="custom-challenges/tic-tac-toe"
               element={<ChallengePage />}
             />
+              <Route path="custom-challenges/tic-tac-toe/:userId" element={<GamePage />} />
+            
           </Route>
           <Route path="/register" element={<Register />} />
         </Routes>
