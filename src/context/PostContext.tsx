@@ -123,7 +123,7 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
       formData.append("bio", bio);
       formData.append("tags", tags);
       formData.append("image", image);
-
+// console.log(bio,tags,image);
       const authToken = JSON.parse(
         localStorage.getItem("userData") || "{}"
       ).authToken;
@@ -146,8 +146,8 @@ console.log(response.data)
       };
 
       setPosts((prevPosts) => [newPost, ...prevPosts]);
-    } catch (error) {
-      console.error("Error creating post:", error);
+    } catch (error:any) {
+      console.error("Error creating post:", error.message);
       throw error;
     }
   };

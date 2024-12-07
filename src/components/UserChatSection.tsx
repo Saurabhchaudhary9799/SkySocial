@@ -112,7 +112,8 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
 
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-  const encryptionService = new EncryptionService("your-secret-base-key");
+  
+  const encryptionService = new EncryptionService(import.meta.env.VITE_GEMINI_SECRET);
 
   const addEmoji = (emojiObject: any) => {
     // console.log(emojiObject.emoji);
@@ -129,14 +130,11 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
     // console.log("hello");
     socket.on("receive-message", async (data) => {
       if (data.senderId === receiver?.id || data.receiverId === userId) {
-        // Fetch updated messages from the server
-        // await fetchMessages();
-        // updateFriends(data.senderId, data.message, data.timestamp);
-        // console.log('data',data.message);
+       
         const decryptedMessage = encryptionService.decrypt(data.message);
-        // console.log('decryptedMessages',decryptedMessage);
+        
         await fetchMessages();
-        updateFriends(data.senderId, decryptedMessage, data.timestamp);
+        updateFriends(data.senderId, data.message, data.timestamp);
       }
     });
     return () => {
@@ -219,7 +217,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
 
       // Fetch updated messages
       await fetchMessages();
-
+console.log(encryptedMessage);
       updateFriends(receiver.id, encryptedMessage, timestamp);
       // Clear input after sending
       setMessage("");
@@ -245,7 +243,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
     if (!prompt.trim()) return;
 
     const answerType =
-      "Create a list of three open-ended and engaging suggestions formatted as a single string for a given prompt. Each suggestion should be separated by '||'. These suggestions are for a chat functionality in social media application , like would you like to watch movie with me ? and i like football, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing  on universal themes that encourage friendly interaction. ";
+      "Create a list of three open-ended and engaging suggestions formatted as a single string for a given prompt. Each suggestion should be separated by '||'. These suggestions are for a chat functionality in social media application ";
     // For example, your output should be structured like this: 'What&apos;s a hobby you&apos;ve recently started?|| If you could have dinner with any historical figure, who would it be?||&apos;s a simple thing
     const newPrompt = prompt + answerType;
 
@@ -267,7 +265,7 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
   };
 
   return (
-    <section className="user-chats flex flex-col  h-[500px]">
+    <section className="user-chats flex flex-col  h-[500px] pb-4">
       {receiver ? (
         <div className="border-b-2 flex gap-x-2 pb-2 items-start pl-2 bg-gray-200 py-2">
           <Avatar>
@@ -317,12 +315,23 @@ const UserChatSection: React.FC<ChatSectionProps> = ({
       </div>
 
       <div className="flex w-full  items-center space-x-2 px-2 relative">
-        <Input
-          type="text"
-          placeholder="start chat"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
+      <textarea
+      placeholder="Start chat"
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      rows={1} // Default row count for small height
+      className="p-2 rounded"
+      style={{
+        width: '100%',
+        resize: 'none', // Prevent manual resizing
+        overflow: 'hidden', // Hide scrollbars
+        minHeight: '40px', // Set a minimum height
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        color:"black"
+      }}
+    />
+
         <button
           onClick={() => setShowPicker(!showPicker)}
           className="bg-blue-500 text-white px-4 py-2 rounded-md"

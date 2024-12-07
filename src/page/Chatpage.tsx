@@ -57,6 +57,7 @@ const Chatpage = () => {
 
         // console.log("Decrypted text:", decryptedText);
         return decryptedText;
+        
       } catch (error) {
         console.error("Decryption failed:", error);
         return encryptedText; // Return original if decryption fails
@@ -240,7 +241,7 @@ const Chatpage = () => {
                         <span className="text-sm">
                           {friend?.lastMessage.sender.id === user?.userid
                             ? "You"
-                            : "friend"}{" "}
+                            : "friend"}
                           :
                           {friend?.lastMessage.message.length > 15
                             ? `${friend?.lastMessage.message.substring(
